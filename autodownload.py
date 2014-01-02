@@ -2,13 +2,8 @@ import os
 import re
 import datetime
 import subprocess
-import keychain
 
-# Lookup credentials from the login keychain
-credentials = keychain.Keychain().get_generic_password('login', servicename='ITC_Autodownload_Script__iTunes_Connect')
-email = credentials['account']
-password = credentials['password']
-vendorid = 85050101
+vendorid = 85838187 # David Foster
 
 # Find all reports in the current directory
 reports = []                                                # list of (vendorid, YYYYMMDD), both strings
@@ -29,7 +24,7 @@ if len(reports) == 0:
 # Determine reports available for download
 downloadableDates = []                                      # list of YYYYMMDD
 now = datetime.datetime.now()
-for i in xrange(14):
+for i in xrange(30):
     downloadableDates.append((now - datetime.timedelta(days = i+1)).strftime('%Y%m%d'))
 
 # Determine reports available for download that haven't already been downloaded
@@ -42,7 +37,7 @@ if len(missingDates) == 0:
 # Download all missing reports, recording any errors
 downloadErrors = []                                         # list of (YYYYMMDD, stdoutdata, stderrdata)
 for curDate in missingDates:
-    downloader = subprocess.Popen(['java', 'Autoingestion', email, password, str(vendorid), 'Sales', 'Daily', 'Summary', curDate], stdout=subprocess.PIPE)
+    downloader = subprocess.Popen(['java', 'Autoingestion', 'autoingestion.properties', str(vendorid), 'Sales', 'Daily', 'Summary', curDate], stdout=subprocess.PIPE)
     out, err = downloader.communicate()
     if 'File Downloaded Successfully' not in out:
         downloadErrors.append((curDate, out, err))

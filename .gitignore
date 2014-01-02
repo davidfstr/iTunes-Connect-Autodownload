@@ -7,3 +7,7 @@
 
 # Database
 data
+S_D_*.txt.gz
+
+# Credentials
+autoingestion.properties
