@@ -39,8 +39,15 @@ downloadErrors = []                                         # list of (YYYYMMDD,
 for curDate in missingDates:
     downloader = subprocess.Popen(['java', 'Autoingestion', 'autoingestion.properties', str(vendorid), 'Sales', 'Daily', 'Summary', curDate], stdout=subprocess.PIPE)
     out, err = downloader.communicate()
-    if 'File Downloaded Successfully' not in out:
-        downloadErrors.append((curDate, out, err))
+    if 'File Downloaded Successfully' in out:
+        continue
+    if 'There are no reports available to download for this selection.' in out:
+        # No downloads occurred on this day.
+        # Generate placeholder result file to avoid refetching.
+        with open('S_D_%s_%s.txt' % (vendorid, curDate), 'wb'):
+            pass
+        continue
+    downloadErrors.append((curDate, out, err))
 
 # Print summary
 if len(downloadErrors) == 0:
