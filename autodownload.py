@@ -41,7 +41,9 @@ for curDate in missingDates:
     out, err = downloader.communicate()
     if 'File Downloaded Successfully' in out:
         continue
-    if 'There are no reports available to download for this selection.' in out:
+    # NOTE: Status message changed format on 2014-06-20
+    if ('There are no reports available to download for this selection.' in out or 
+        'There is no report available to download, for the selected period'):
         # No downloads occurred on this day.
         # Generate placeholder result file to avoid refetching.
         with open('S_D_%s_%s.txt' % (vendorid, curDate), 'wb'):
